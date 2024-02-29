@@ -23,26 +23,35 @@ def makeChange(coins, total):
         denomination of coin in the list.
 
     Complexity Analysis:
-        Time Complexity: O(total * len(coins))
-        Space Complexity: O(total)
+        Time Complexity: O(n), where n is the total amount.
+        Space Complexity: O(1).
     """
     if total <= 0:
         return 0
 
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0  # Base case: 0 coins needed to make a total of 0
+    coins.sort(reverse=True)  # Sort coins in descending order
+
+    num_coins = 0
+    remaining_total = total
 
     # Iterate through each coin value
     for coin in coins:
-        # Update dp array for each possible total amount
-        for amount in range(coin, total + 1):
-            dp[amount] = min(dp[amount], dp[amount - coin] + 1)
+        if coin <= remaining_total:
+            # Calculate the maximum number of coins of this denomination
+            num_coin_denomination = remaining_total // coin
+            # Update the remaining total
+            remaining_total -= num_coin_denomination * coin
+            # Update the total number of coins used
+            num_coins += num_coin_denomination
+
+        if remaining_total == 0:
+            break
 
     # If the total amount cannot be made with the given coins, return -1
-    if dp[total] == float('inf'):
+    if remaining_total != 0:
         return -1
 
-    return dp[total]
+    return num_coins
 
 
 if __name__ == '__main__':
